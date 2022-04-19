@@ -9,12 +9,14 @@ import PostCard from '../components/PostCard';
   
   const {
     loading,
-     data: { getPosts: posts}
-    }  = useQuery(FETCH_POSTS_QUERY)
+     data: { getPosts: posts }
+    }  = useQuery(FETCH_POSTS_QUERY);
+    
+    // const { loading, data: { posts } = {} } = useQuery(FETCH_POSTS_QUERY);
 
   return (
     <Grid columns={3}>
-    <Grid.Row>
+    <Grid.Row className='page-title'>
       <h1>Recent Posts</h1>
     </Grid.Row>
     <Grid.Row>
@@ -23,7 +25,7 @@ import PostCard from '../components/PostCard';
           <h1>Loading posts...</h1>
         ):(
           posts && posts.map(post =>(
-            <Grid.Column key={post.id}>
+            <Grid.Column key={post.id} style={{marginBottom: 20}}>
               <PostCard post={post} />
             </Grid.Column>
           ))
@@ -34,17 +36,25 @@ import PostCard from '../components/PostCard';
 }
 
 const FETCH_POSTS_QUERY = gql`
-    query{  
-      getPosts{
-        id body createdAt username 
-        comments{
-          id username createdAt body
-        }
-        likes{
-          username
-        }
-        likeCount
-        commentCount
-      }
+   {
+  getPosts{
+    id
+    body
+    createdAt
+    username
+    comments {
+      id
+      createdAt
+      body
+      username
     }
+    likes {
+      id
+      username
+      createdAt
+    }
+    likeCount
+    commentCount
+  }
+}
   `
