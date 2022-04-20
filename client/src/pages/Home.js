@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag';
-import { Grid, Transition } from 'semantic-ui-react';
+import { Grid, } from 'semantic-ui-react';
 
 import PostCard from '../components/PostCard';
 
@@ -31,35 +31,8 @@ const FETCH_POSTS_QUERY = gql`
 
  export default function Home() {
   
-  // const { data, loading, error } = useQuery(FETCH_POSTS_QUERY);
-  // if(data) {
-  //   console.log(data);
-  //   const { getPosts: posts } = data;
-  // }
-  // if(error) {
-  //   console.log(error);
-  //   return "error"; // blocks rendering
-  // }
+        const { loading, data, data: { posts } = {} } = useQuery(FETCH_POSTS_QUERY);
 
-  // const {
-  //   loading,
-  //    data: { getPosts: posts }
-  //   }  = useQuery(FETCH_POSTS_QUERY);
-    
-    const { loading, data, data: { posts } = {} } = useQuery(FETCH_POSTS_QUERY);
-
-
-  // {loading && <h1>Loading posts...</h1>}
-  // {data && (
-  //  <Transition.Group>
-  //    {posts &&
-  //     posts.map((post) => (
-  //       <Grid.Column key={post.id} style={{ marginBottom: 20 }}>
-  //         <PostCard post={post} />
-  //       </Grid.Column>
-  //     ))}
-  // </Transition.Group>
-  // )}
 
 
   return (
