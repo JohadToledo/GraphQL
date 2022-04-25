@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/auth";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import SinglePost from "./pages/SinglePost";
 import AuthRoute from "./util/AuthRoute";
 <link
   async
@@ -40,6 +41,7 @@ function App() {
                 </AuthRoute>
               }
             ></Route>
+            <Route exact path="/posts/:postId" element={<SinglePost />}></Route>
           </Routes>
         </Container>
       </BrowserRouter>
@@ -48,4 +50,3 @@ function App() {
 }
 
 export default App;
-
