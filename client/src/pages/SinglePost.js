@@ -7,6 +7,7 @@ import { Button, Card, Form, Grid, Icon, Image, Label } from "semantic-ui-react"
 import DeleteButton from "../components/DeleteButton";
 import LikeButton from "../components/LikeButton";
 import { AuthContext } from "../context/auth";
+import MyPopup from "../util/MyPopup";
 
 export function withRouter(Children) {
     return (props) => {
@@ -85,19 +86,22 @@ export function withRouter(Children) {
               </Card.Content>
               <hr />
               <Card.Content extra>
-                <LikeButton user={user} post={{ id, likeCount, likes }} />
-                <Button
-                  as="div"
-                  labelPosition="right"
-                  onClick={() => console.log("commented")}
-                >
-                  <Button basic color="blue">
-                    <Icon name="comment" />
-                  </Button>
-                  <Label basic color="blue" pointing="left">
-                    {commentCount}
-                  </Label>
+              <MyPopup content='Like on this commet'><LikeButton user={user} post={{ id, likeCount, likes }} /></MyPopup>
+              <MyPopup
+              content='Comment on post'>
+              <Button
+                as="div"
+                labelPosition="right"
+                onClick={() => console.log("commented")}
+              >
+                <Button basic color="blue">
+                  <Icon name="comment" />
                 </Button>
+                <Label basic color="blue" pointing="left">
+                  {commentCount}
+                </Label>
+              </Button>
+              </MyPopup>
                 {user && user.username === username && (
                     <DeleteButton postId={id} callback={deletePostCallback}/>
                 )} 

@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import React, { useState } from "react";
 import { Button, Confirm, Icon } from "semantic-ui-react";
 import { FETCH_POSTS_QUERY } from "../util/graphql";
+import MyPopup from "../util/MyPopup";
 
 export default function DeleteButton({ postId, commentId, callback }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -28,6 +29,9 @@ export default function DeleteButton({ postId, commentId, callback }) {
   });
   return (
     <>
+    <MyPopup
+      content={commentId ? 'Delete comment' : 'Delete post'}
+      >
       <Button
         as="div"
         color="red"
@@ -36,6 +40,8 @@ export default function DeleteButton({ postId, commentId, callback }) {
       >
         <Icon name="trash" style={{ margin: 0 }} />
       </Button>
+      </MyPopup>
+      
       <Confirm
         open={confirmOpen}
         onCancel={() => setConfirmOpen(false)}
