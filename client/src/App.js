@@ -7,7 +7,7 @@ import { AuthProvider } from "./context/auth";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-// import SinglePost from "./pages/SinglePost";
+import SinglePost from "./pages/SinglePost";
 import AuthRoute from "./util/AuthRoute";
 <link
   async
@@ -40,12 +40,12 @@ function App() {
                   <Register />
                 </AuthRoute>
               }
-            ></Route>
+              ></Route>
+              <Route exact path="/posts/:id" element={<SinglePost />}></Route>
             </Routes>
             </Container>
             </BrowserRouter>
             </AuthProvider>
-            // <Route exact path="/posts/:postId" element={<SinglePost />}></Route>
   );
 }
 

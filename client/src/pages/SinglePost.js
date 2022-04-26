@@ -1,27 +1,58 @@
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import gql from "graphql-tag";
 import moment from "moment";
-import React, { useContext } from "react";
-import { Button, Card, Grid, Icon, Image, Label } from "semantic-ui-react";
+import React, { useContext, useRef, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Button, Card, Form, Grid, Icon, Image, Label } from "semantic-ui-react";
+import DeleteButton from "../components/DeleteButton";
 import LikeButton from "../components/LikeButton";
 import { AuthContext } from "../context/auth";
 
-export default function SinglePost(props) {
-  const postId = props.match.params.postId;
-  console.log(postId);
+export function withRouter(Children) {
+    return (props) => {
+      const match = { params: useParams() };
+      return <Children {...props} match={match} />
+    }
+  }
+
+ function SinglePost(props) {
+    const navigate = useNavigate();
+
+  const postId = props.match.params.id;
 
   const { user } = useContext(AuthContext);
 
+  const commentInputRef = useRef(null)
+  
+  const [comment, setComment] = useState('')
+
   const {
-    data: { getPost },
-  } = useQuery(FETCH_POST_QUERY, {
+      data ={}
+    } 
+  = useQuery(FETCH_POST_QUERY, {
     variables: {
       postId,
     },
   });
 
+  const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION,{
+    update(){
+       setComment('')
+       commentInputRef.current.blur()
+    },
+    variables:{
+      postId,
+      body: comment
+    }
+  })
+
+  function deletePostCallback(){
+    navigate("/");
+  }
+
+
   let postMarkup;
-  if (!getPost) {
+  if (!data.getPost) {
     postMarkup = <p>Loading post..</p>;
   } else {
     const {
@@ -33,7 +64,7 @@ export default function SinglePost(props) {
       likes,
       commentCount,
       likeCount,
-    } = getPost;
+    } = data.getPost;
 
     postMarkup = (
       <Grid>
@@ -67,17 +98,65 @@ export default function SinglePost(props) {
                     {commentCount}
                   </Label>
                 </Button>
+                {user && user.username === username && (
+                    <DeleteButton postId={id} callback={deletePostCallback}/>
+                )} 
               </Card.Content>
             </Card>
+            {user && (<Card fluid >
+              <Card.Content>
+              <p>Post a Comment</p>
+              <Form>
+                <div className="ui action input fluid">
+                  <input
+                    type='text'
+                    placeholder="Comment.."
+                    name='comment'
+                    value={comment}
+                    onChange={e => setComment(e.target.value)}
+                    ref={commentInputRef}/>
+                    <button type='submit'
+                      className="ui button teal"
+                      disabled={comment.trim() === ''}
+                      onClick={submitComment}
+                      >
+                      Submit
+                      </button>
+                </div>
+              </Form>
+              </Card.Content>
+              </Card>)}
+            {comments.map(comment=>(
+              <Card fluid key={comment.id}>
+               <Card.Content>
+               { user && user.username === comment.username && (
+                 <DeleteButton postId={id} commentId={comment.id}/>
+               )}
+               <Card.Header>{comment.username}</Card.Header>
+               <Card.Meta>{moment(comment.createdAt).fromNow()}</Card.Meta>
+               <Card.Description>{comment.body}</Card.Description>
+               </Card.Content>
+              </Card>
+            ))}
           </Grid.Column>
         </Grid.Row>
       </Grid>
     );
   }
 
-  return <div>SinglePodsfsdfsdst</div>;
+  return postMarkup;
 }
+const SUBMIT_COMMENT_MUTATION= gql`
+mutation($postId: String!, $body: String!){
+  createComment(postId: $postId, body: $body){
+    id
+    comments{
+      id body createdAt username
+    }
+    commentCount
 
+  }
+}`
 const FETCH_POST_QUERY = gql`
   query ($postId: ID!) {
     getPost(postId: $postId) {
@@ -99,3 +178,5 @@ const FETCH_POST_QUERY = gql`
     }
   }
 `;
+
+export default withRouter(SinglePost)
